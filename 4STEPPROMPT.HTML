@@ -1,306 +1,817 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="theme-dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>4-Step Progressive Prompt Generator</title>
+  <title>Expanded Capability Ladder - Cryptography Benchmark</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            brand: {
-              500: '#0ea5e9',
-              600: '#0284c7',
-            }
-          }
-        }
-      }
+  <style>
+    pre code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
     }
-  </script>
-</head>
-<body class="bg-slate-900 text-slate-100 min-h-screen py-10 px-4 sm:px-6 lg:px-8">
-  <div class="max-w-4xl mx-auto space-y-8">
-    
-    <!-- Header -->
-    <header class="text-center space-y-2">
-      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-sky-500/10 text-sky-400 border border-sky-500/20">
-        4-Tier Capability Framework
-      </div>
-      <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white">
-        Multi-Platform Prompt Generator
-      </h1>
-      <p class="text-slate-400 text-sm max-w-xl mx-auto">
-        1. Simple English &bull; 2. Diagram Only &bull; 3. Standalone HTML &bull; 4. Video Script
-      </p>
-    </header>
 
-    <!-- Interactive Topic Input -->
-    <div class="bg-slate-800/90 border border-slate-700 rounded-xl p-5 shadow-lg space-y-2">
-      <label for="topic-input" class="block text-xs font-semibold uppercase tracking-wider text-slate-300">
-        Enter Any Topic to Test:
-      </label>
-      <div class="flex gap-3">
-        <input 
-          id="topic-input" 
-          type="text" 
-          value="how an AI agent loop works" 
-          oninput="updatePrompts()"
-          placeholder="e.g. quantum computing, how DNS works, git rebase..."
-          class="flex-1 bg-slate-950 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-colors"
-        />
-        <button 
-          onclick="resetTopic()" 
-          class="px-3 py-2 text-xs font-medium bg-slate-700 hover:bg-slate-600 rounded-lg text-slate-200 transition-colors">
-          Reset
+    /* Tri-State Theme Variables */
+    :root.theme-dark {
+      --bg-page: #020617;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --card-bg: #0f172a;
+      --card-inner: #020617;
+      --border-color: #1e293b;
+      --btn-secondary: #1e293b;
+      --btn-secondary-hover: #334155;
+      --tab-inactive: #1e293b;
+      --tab-inactive-text: #cbd5e1;
+      --focus-ring: #10b981;
+      --ring-offset: #020617;
+    }
+
+    :root.theme-medium {
+      --bg-page: #1e293b;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --card-bg: #334155;
+      --card-inner: #1e293b;
+      --border-color: #475569;
+      --btn-secondary: #475569;
+      --btn-secondary-hover: #64748b;
+      --tab-inactive: #475569;
+      --tab-inactive-text: #e2e8f0;
+      --focus-ring: #34d399;
+      --ring-offset: #1e293b;
+    }
+
+    :root.theme-light {
+      --bg-page: #f8fafc;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --card-bg: #ffffff;
+      --card-inner: #f1f5f9;
+      --border-color: #e2e8f0;
+      --btn-secondary: #e2e8f0;
+      --btn-secondary-hover: #cbd5e1;
+      --tab-inactive: #e2e8f0;
+      --tab-inactive-text: #334155;
+      --focus-ring: #059669;
+      --ring-offset: #ffffff;
+    }
+
+    body {
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      transition: background-color 0.25s ease, color 0.25s ease;
+    }
+
+    .themed-card {
+      background-color: var(--card-bg);
+      border-color: var(--border-color);
+      transition: background-color 0.25s ease, border-color 0.25s ease;
+    }
+
+    .themed-inner {
+      background-color: var(--card-inner);
+      border-color: var(--border-color);
+      transition: background-color 0.25s ease, border-color 0.25s ease;
+    }
+
+    .themed-text-muted {
+      color: var(--text-muted);
+    }
+
+    .themed-btn-sec {
+      background-color: var(--btn-secondary);
+      color: var(--text-main);
+    }
+    .themed-btn-sec:hover {
+      background-color: var(--btn-secondary-hover);
+    }
+
+    .focus-ring {
+      outline: none;
+    }
+    .focus-ring:focus-visible {
+      outline: 2px solid var(--focus-ring);
+      outline-offset: 2px;
+    }
+  </style>
+</head>
+<body class="min-h-screen py-10 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-5xl mx-auto space-y-10">
+    
+    <!-- Top Bar with Theme Toggle -->
+    <div class="flex items-center justify-between border-b themed-inner p-3 rounded-xl border">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
+        Advanced Linguistic & Technical Benchmarking
+      </div>
+
+      <!-- Tri-State Theme Switcher -->
+      <div class="flex items-center gap-1.5 text-xs font-medium" role="group" aria-label="Theme Switcher">
+        <span class="themed-text-muted mr-1 hidden sm:inline">Theme:</span>
+        <button onclick="setTheme('light')" id="theme-btn-light" aria-pressed="false" class="focus-ring px-2.5 py-1 rounded-lg transition-colors border themed-btn-sec">
+          Light
+        </button>
+        <button onclick="setTheme('medium')" id="theme-btn-medium" aria-pressed="false" class="focus-ring px-2.5 py-1 rounded-lg transition-colors border themed-btn-sec">
+          Medium
+        </button>
+        <button onclick="setTheme('dark')" id="theme-btn-dark" aria-pressed="true" class="focus-ring px-2.5 py-1 rounded-lg transition-colors border bg-emerald-600 text-white font-semibold">
+          Dark
         </button>
       </div>
     </div>
 
-    <!-- Platform Selector Tabs -->
-    <div class="flex flex-wrap gap-2 justify-center border-b border-slate-800 pb-3">
-      <button onclick="switchTab('claude')" id="tab-claude" class="tab-btn px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all bg-sky-600 text-white shadow-sm">
-        Claude
-      </button>
-      <button onclick="switchTab('chatgpt')" id="tab-chatgpt" class="tab-btn px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all bg-slate-800 text-slate-300 hover:bg-slate-700">
-        ChatGPT
-      </button>
-      <button onclick="switchTab('openai')" id="tab-openai" class="tab-btn px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all bg-slate-800 text-slate-300 hover:bg-slate-700">
-        OpenAI API
-      </button>
-      <button onclick="switchTab('aistudio')" id="tab-aistudio" class="tab-btn px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all bg-slate-800 text-slate-300 hover:bg-slate-700">
-        AI Studio
-      </button>
-      <button onclick="switchTab('gemini')" id="tab-gemini" class="tab-btn px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all bg-slate-800 text-slate-300 hover:bg-slate-700">
-        Gemini Web
-      </button>
-      <button onclick="switchTab('groq')" id="tab-groq" class="tab-btn px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all bg-slate-800 text-slate-300 hover:bg-slate-700">
-        Groq
-      </button>
+    <!-- Header -->
+    <header class="text-center space-y-3">
+      <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight">
+        Multi-Rung Capability Ladder
+      </h1>
+      <p class="themed-text-muted max-w-2xl mx-auto text-sm sm:text-base">
+        Expanded with controlled natural languages (ASD-STE100, E-Prime, Up-Goer Five, RFC 2119), visual/interactive outputs, and accessible keyboard-navigated platform guides.
+      </p>
+    </header>
+
+    <!-- Main Card: Full Raw Script for Copying -->
+    <div class="themed-card border rounded-2xl p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b border-inherit pb-4">
+        <div>
+          <h2 class="text-lg font-bold flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+            Full Prompt Script (All Rungs)
+          </h2>
+          <p class="text-xs themed-text-muted">Ready to copy and paste directly into any AI model</p>
+        </div>
+        <button onclick="copyFullScript(this)" class="focus-ring inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white transition-all shadow-md">
+          <span>Copy Complete Script</span>
+        </button>
+      </div>
+
+      <!-- Exact Text with Expanded Rungs -->
+      <div class="relative">
+        <pre class="themed-inner rounded-xl p-5 text-xs sm:text-sm overflow-x-auto border border-inherit leading-relaxed font-mono whitespace-pre-wrap"><code id="raw-prompt">Baseline
+Explain how Public-Key Cryptography works.
+
+Rung 1A (ASD-STE100)
+Explain the same thing in ASD-STE100 Simplified Technical English (~80% spec compliance: active voice only, max 20 words per sentence, one command per sentence).
+
+Rung 1B (E-Prime)
+Explain the same thing in E-Prime English: strictly eliminate all forms of the verb "to be" (no is, are, was, were, be, being, been). Every sentence must attribute action directly to an active subject.
+
+Rung 1C (Up-Goer Five)
+Explain the same thing using ONLY the ten hundred (1,000) most common words in the English language.
+
+Rung 1D (IETF RFC 2119 Specification)
+Define the mechanism as a formal technical standard specification using uppercase RFC 2119 requirement keywords (MUST, MUST NOT, REQUIRED, SHALL, SHOULD, MAY).
+
+Rung 2 (Visual Only)
+Do not write an explanation. Create a diagram that shows how Public-Key Cryptography works.
+
+Rung 3 (Interactive HTML)
+Explain this as a single interactive HTML page with animation that lets me step through the process.
+
+Rung 4 (3Blue1Brown Video)
+Create a 3Blue1Brown style explainer video on how Public-Key Cryptography works, with audio narration.</code></pre>
+      </div>
     </div>
 
-    <!-- Cards Container -->
-    <main>
+    <!-- Breakdown by Rung with Keywords -->
+    <div class="space-y-4">
+      <h3 class="text-xs font-semibold uppercase tracking-wider themed-text-muted">
+        Rung Catalog & Key Specifications
+      </h3>
 
-      <!-- 1. Claude -->
-      <section id="panel-claude" class="platform-panel bg-slate-800/80 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-4">
-        <div class="flex items-center justify-between border-b border-slate-700 pb-3">
-          <div>
-            <h2 class="text-lg font-bold text-white flex items-center gap-2">
-              <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
-              Claude (Anthropic)
-            </h2>
-            <p class="text-xs text-slate-400">Renders HTML & SVG diagrams directly inside Artifacts.</p>
+      <div class="grid grid-cols-1 gap-3.5">
+        
+        <!-- Baseline -->
+        <div class="themed-card border rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div class="space-y-1">
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded text-xs font-bold themed-btn-sec border border-inherit">BASELINE</span>
+              <span class="text-sm font-semibold">General Concept Explanation</span>
+            </div>
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              <span class="text-[11px] px-2 py-0.5 rounded-full themed-inner text-emerald-500 border border-inherit">#ConceptualClarity</span>
+              <span class="text-[11px] px-2 py-0.5 rounded-full themed-inner themed-text-muted border border-inherit">#AsymmetricKeys</span>
+            </div>
           </div>
-          <button onclick="copyContent('prompt-claude', this)" class="copy-btn px-3.5 py-2 text-xs font-semibold rounded-lg bg-sky-600 hover:bg-sky-500 text-white transition-colors">
-            Copy Prompt
+          <button onclick="copySnippet('Baseline\nExplain how Public-Key Cryptography works.', this)" class="focus-ring text-xs px-3 py-1.5 rounded themed-btn-sec border border-inherit shrink-0 transition-colors">
+            Copy
           </button>
         </div>
-        <pre class="bg-slate-950 rounded-xl p-4 text-xs sm:text-sm text-slate-200 overflow-x-auto border border-slate-800 leading-relaxed font-mono whitespace-pre-wrap"><code id="prompt-claude"></code></pre>
-      </section>
 
-      <!-- 2. ChatGPT -->
-      <section id="panel-chatgpt" class="platform-panel hidden bg-slate-800/80 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-4">
-        <div class="flex items-center justify-between border-b border-slate-700 pb-3">
-          <div>
-            <h2 class="text-lg font-bold text-white flex items-center gap-2">
-              <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
-              ChatGPT (OpenAI Canvas / Web)
-            </h2>
-            <p class="text-xs text-slate-400">Optimized for Canvas code blocks and Python sandbox scripts.</p>
+        <!-- Rung 1A: ASD-STE100 -->
+        <div class="themed-card border rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div class="space-y-1">
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded text-xs font-bold bg-amber-500/10 text-amber-500 border border-amber-500/20">RUNG 1A</span>
+              <span class="text-sm font-semibold">ASD-STE100 Simplified Technical English</span>
+            </div>
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              <span class="text-[11px] px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-500">#ASD-STE100</span>
+              <span class="text-[11px] px-2 py-0.5 rounded-full themed-inner themed-text-muted border border-inherit">#Max20Words</span>
+              <span class="text-[11px] px-2 py-0.5 rounded-full themed-inner themed-text-muted border border-inherit">#AerospaceStandard</span>
+            </div>
           </div>
-          <button onclick="copyContent('prompt-chatgpt', this)" class="copy-btn px-3.5 py-2 text-xs font-semibold rounded-lg bg-sky-600 hover:bg-sky-500 text-white transition-colors">
-            Copy Prompt
+          <button onclick="copySnippet('Rung 1A (ASD-STE100)\nExplain the same thing in ASD-STE100 Simplified Technical English (~80% spec compliance: active voice only, max 20 words per sentence, one command per sentence).', this)" class="focus-ring text-xs px-3 py-1.5 rounded themed-btn-sec border border-inherit shrink-0 transition-colors">
+            Copy
           </button>
         </div>
-        <pre class="bg-slate-950 rounded-xl p-4 text-xs sm:text-sm text-slate-200 overflow-x-auto border border-slate-800 leading-relaxed font-mono whitespace-pre-wrap"><code id="prompt-chatgpt"></code></pre>
-      </section>
 
-      <!-- 3. OpenAI API -->
-      <section id="panel-openai" class="platform-panel hidden bg-slate-800/80 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-4">
-        <div class="flex items-center justify-between border-b border-slate-700 pb-3">
-          <div>
-            <h2 class="text-lg font-bold text-white flex items-center gap-2">
-              <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
-              OpenAI API & Playground
-            </h2>
-            <p class="text-xs text-slate-400">Formatted as explicit system instructions and deliverable blocks.</p>
+        <!-- Rung 1B: E-Prime -->
+        <div class="themed-card border rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div class="space-y-1">
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded text-xs font-bold bg-violet-500/10 text-violet-500 border border-violet-500/20">RUNG 1B</span>
+              <span class="text-sm font-semibold">E-Prime (Zero &quot;To Be&quot; Verbs)</span>
+            </div>
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              <span class="text-[11px] px-2 py-0.5 rounded-full bg-violet-500/10 text-violet-500">#E-Prime</span>
+              <span class="text-[11px] px-2 py-0.5 rounded-full themed-inner themed-text-muted border border-inherit">#NoIsAreWasWere</span>
+              <span class="text-[11px] px-2 py-0.5 rounded-full themed-inner themed-text-muted border border-inherit">#ActiveAttribution</span>
+            </div>
           </div>
-          <button onclick="copyContent('prompt-openai', this)" class="copy-btn px-3.5 py-2 text-xs font-semibold rounded-lg bg-sky-600 hover:bg-sky-500 text-white transition-colors">
-            Copy Prompt
+          <button onclick="copySnippet('Rung 1B (E-Prime)\nExplain the same thing in E-Prime English: strictly eliminate all forms of the verb &quot;to be&quot; (no is, are, was, were, be, being, been). Every sentence must attribute action directly to an active subject.', this)" class="focus-ring text-xs px-3 py-1.5 rounded themed-btn-sec border border-inherit shrink-0 transition-colors">
+            Copy
           </button>
         </div>
-        <pre class="bg-slate-950 rounded-xl p-4 text-xs sm:text-sm text-slate-200 overflow-x-auto border border-slate-800 leading-relaxed font-mono whitespace-pre-wrap"><code id="prompt-openai"></code></pre>
-      </section>
 
-      <!-- 4. Google AI Studio -->
-      <section id="panel-aistudio" class="platform-panel hidden bg-slate-800/80 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-4">
-        <div class="flex items-center justify-between border-b border-slate-700 pb-3">
-          <div>
-            <h2 class="text-lg font-bold text-white flex items-center gap-2">
-              <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
-              Google AI Studio
-            </h2>
-            <p class="text-xs text-slate-400">Formatted for raw markdown rendering and high context capacity.</p>
+        <!-- Rung 1C: Up-Goer Five -->
+        <div class="themed-card border rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div class="space-y-1">
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded text-xs font-bold bg-teal-500/10 text-teal-500 border border-teal-500/20">RUNG 1C</span>
+              <span class="text-sm font-semibold">Up-Goer Five (Top 1,000 Words Only)</span>
+            </div>
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              <span class="text-[11px] px-2 py-0.5 rounded-full bg-teal-500/10 text-teal-500">#UpGoerFive</span>
+              <span class="text-[11px] px-2 py-0.5 rounded-full themed-inner themed-text-muted border border-inherit">#ThingExplainer</span>
+              <span class="text-[11px] px-2 py-0.5 rounded-full themed-inner themed-text-muted border border-inherit">#LexicalConstraint</span>
+            </div>
           </div>
-          <button onclick="copyContent('prompt-aistudio', this)" class="copy-btn px-3.5 py-2 text-xs font-semibold rounded-lg bg-sky-600 hover:bg-sky-500 text-white transition-colors">
-            Copy Prompt
+          <button onclick="copySnippet('Rung 1C (Up-Goer Five)\nExplain the same thing using ONLY the ten hundred (1,000) most common words in the English language.', this)" class="focus-ring text-xs px-3 py-1.5 rounded themed-btn-sec border border-inherit shrink-0 transition-colors">
+            Copy
           </button>
         </div>
-        <pre class="bg-slate-950 rounded-xl p-4 text-xs sm:text-sm text-slate-200 overflow-x-auto border border-slate-800 leading-relaxed font-mono whitespace-pre-wrap"><code id="prompt-aistudio"></code></pre>
-      </section>
 
-      <!-- 5. Gemini Web -->
-      <section id="panel-gemini" class="platform-panel hidden bg-slate-800/80 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-4">
-        <div class="flex items-center justify-between border-b border-slate-700 pb-3">
-          <div>
-            <h2 class="text-lg font-bold text-white flex items-center gap-2">
-              <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
-              Gemini Web App
-            </h2>
-            <p class="text-xs text-slate-400">Formatted for conversational chat with clean code blocks.</p>
+        <!-- Rung 1D: RFC 2119 -->
+        <div class="themed-card border rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div class="space-y-1">
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded text-xs font-bold bg-blue-500/10 text-blue-500 border border-blue-500/20">RUNG 1D</span>
+              <span class="text-sm font-semibold">IETF RFC 2119 Formal Specification</span>
+            </div>
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              <span class="text-[11px] px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-500">#RFC2119</span>
+              <span class="text-[11px] px-2 py-0.5 rounded-full themed-inner themed-text-muted border border-inherit">#MUST_SHALL_MAY</span>
+              <span class="text-[11px] px-2 py-0.5 rounded-full themed-inner themed-text-muted border border-inherit">#ProtocolStandard</span>
+            </div>
           </div>
-          <button onclick="copyContent('prompt-gemini', this)" class="copy-btn px-3.5 py-2 text-xs font-semibold rounded-lg bg-sky-600 hover:bg-sky-500 text-white transition-colors">
-            Copy Prompt
+          <button onclick="copySnippet('Rung 1D (IETF RFC 2119 Specification)\nDefine the mechanism as a formal technical standard specification using uppercase RFC 2119 requirement keywords (MUST, MUST NOT, REQUIRED, SHALL, SHOULD, MAY).', this)" class="focus-ring text-xs px-3 py-1.5 rounded themed-btn-sec border border-inherit shrink-0 transition-colors">
+            Copy
           </button>
         </div>
-        <pre class="bg-slate-950 rounded-xl p-4 text-xs sm:text-sm text-slate-200 overflow-x-auto border border-slate-800 leading-relaxed font-mono whitespace-pre-wrap"><code id="prompt-gemini"></code></pre>
-      </section>
 
-      <!-- 6. Groq -->
-      <section id="panel-groq" class="platform-panel hidden bg-slate-800/80 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-4">
-        <div class="flex items-center justify-between border-b border-slate-700 pb-3">
-          <div>
-            <h2 class="text-lg font-bold text-white flex items-center gap-2">
-              <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
-              Groq (Llama-3 / Mixtral)
-            </h2>
-            <p class="text-xs text-slate-400">Zero-fluff direct output for fast text inference engines.</p>
+        <!-- Rung 2: Visual Only -->
+        <div class="themed-card border rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div class="space-y-1">
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded text-xs font-bold bg-indigo-500/10 text-indigo-500 border border-indigo-500/20">RUNG 2</span>
+              <span class="text-sm font-semibold">Pure Diagram Output (Zero Prose)</span>
+            </div>
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              <span class="text-[11px] px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-500">#NegativeConstraint</span>
+              <span class="text-[11px] px-2 py-0.5 rounded-full themed-inner themed-text-muted border border-inherit">#MermaidJS</span>
+              <span class="text-[11px] px-2 py-0.5 rounded-full themed-inner themed-text-muted border border-inherit">#ZeroExplanation</span>
+            </div>
           </div>
-          <button onclick="copyContent('prompt-groq', this)" class="copy-btn px-3.5 py-2 text-xs font-semibold rounded-lg bg-sky-600 hover:bg-sky-500 text-white transition-colors">
-            Copy Prompt
+          <button onclick="copySnippet('Rung 2 (Visual Only)\nDo not write an explanation. Create a diagram that shows how Public-Key Cryptography works.', this)" class="focus-ring text-xs px-3 py-1.5 rounded themed-btn-sec border border-inherit shrink-0 transition-colors">
+            Copy
           </button>
         </div>
-        <pre class="bg-slate-950 rounded-xl p-4 text-xs sm:text-sm text-slate-200 overflow-x-auto border border-slate-800 leading-relaxed font-mono whitespace-pre-wrap"><code id="prompt-groq"></code></pre>
-      </section>
 
-    </main>
+        <!-- Rung 3: Interactive HTML -->
+        <div class="themed-card border rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div class="space-y-1">
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded text-xs font-bold bg-sky-500/10 text-sky-500 border border-sky-500/20">RUNG 3</span>
+              <span class="text-sm font-semibold">Interactive Step-Through Single-Page App</span>
+            </div>
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              <span class="text-[11px] px-2 py-0.5 rounded-full bg-sky-500/10 text-sky-500">#InteractiveHTML</span>
+              <span class="text-[11px] px-2 py-0.5 rounded-full themed-inner themed-text-muted border border-inherit">#StateMachine</span>
+              <span class="text-[11px] px-2 py-0.5 rounded-full themed-inner themed-text-muted border border-inherit">#CSSAnimation</span>
+            </div>
+          </div>
+          <button onclick="copySnippet('Rung 3 (Interactive HTML)\nExplain this as a single interactive HTML page with animation that lets me step through the process.', this)" class="focus-ring text-xs px-3 py-1.5 rounded themed-btn-sec border border-inherit shrink-0 transition-colors">
+            Copy
+          </button>
+        </div>
+
+        <!-- Rung 4: 3B1B Manim -->
+        <div class="themed-card border rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div class="space-y-1">
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded text-xs font-bold bg-pink-500/10 text-pink-500 border border-pink-500/20">RUNG 4</span>
+              <span class="text-sm font-semibold">3Blue1Brown Math Animation & Narration</span>
+            </div>
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              <span class="text-[11px] px-2 py-0.5 rounded-full bg-pink-500/10 text-pink-500">#3Blue1Brown</span>
+              <span class="text-[11px] px-2 py-0.5 rounded-full themed-inner themed-text-muted border border-inherit">#ManimPython</span>
+              <span class="text-[11px] px-2 py-0.5 rounded-full themed-inner themed-text-muted border border-inherit">#AudioNarration</span>
+            </div>
+          </div>
+          <button onclick="copySnippet('Rung 4 (3Blue1Brown Video)\nCreate a 3Blue1Brown style explainer video on how Public-Key Cryptography works, with audio narration.', this)" class="focus-ring text-xs px-3 py-1.5 rounded themed-btn-sec border border-inherit shrink-0 transition-colors">
+            Copy
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- ACCESSIBLE 8-MODEL TAB INTERFACE               -->
+    <!-- ============================================== -->
+    <section class="space-y-5 pt-6 border-t border-inherit" aria-labelledby="platform-guide-heading">
+      <div class="space-y-1">
+        <span class="text-xs uppercase tracking-widest text-emerald-500 font-semibold">Model Optimization</span>
+        <h2 id="platform-guide-heading" class="text-2xl font-bold">How to Prompt Across 8 Major AI Platforms</h2>
+        <p class="themed-text-muted text-sm">
+          Use the left/right arrow keys to switch tabs, or click any platform to view its tailored prompt.
+        </p>
+      </div>
+
+      <!-- ARIA Tablist with Keyboard Nav -->
+      <div 
+        role="tablist" 
+        aria-label="AI Platform Selection" 
+        class="flex flex-wrap gap-2 border-b border-inherit pb-3"
+        id="model-tablist"
+      >
+        <button 
+          role="tab" 
+          aria-selected="true" 
+          aria-controls="model-panel-claude" 
+          id="tab-claude" 
+          tabindex="0"
+          onclick="activateTab('claude')"
+          class="model-tab focus-ring px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-600 text-white shadow-sm transition-all"
+        >
+          Claude
+        </button>
+        <button 
+          role="tab" 
+          aria-selected="false" 
+          aria-controls="model-panel-chatgpt" 
+          id="tab-chatgpt" 
+          tabindex="-1"
+          onclick="activateTab('chatgpt')"
+          class="model-tab focus-ring px-3 py-1.5 rounded-lg text-xs font-medium themed-btn-sec border border-inherit transition-all"
+        >
+          ChatGPT
+        </button>
+        <button 
+          role="tab" 
+          aria-selected="false" 
+          aria-controls="model-panel-openai" 
+          id="tab-openai" 
+          tabindex="-1"
+          onclick="activateTab('openai')"
+          class="model-tab focus-ring px-3 py-1.5 rounded-lg text-xs font-medium themed-btn-sec border border-inherit transition-all"
+        >
+          OpenAI API
+        </button>
+        <button 
+          role="tab" 
+          aria-selected="false" 
+          aria-controls="model-panel-gemini" 
+          id="tab-gemini" 
+          tabindex="-1"
+          onclick="activateTab('gemini')"
+          class="model-tab focus-ring px-3 py-1.5 rounded-lg text-xs font-medium themed-btn-sec border border-inherit transition-all"
+        >
+          Gemini
+        </button>
+        <button 
+          role="tab" 
+          aria-selected="false" 
+          aria-controls="model-panel-aistudio" 
+          id="tab-aistudio" 
+          tabindex="-1"
+          onclick="activateTab('aistudio')"
+          class="model-tab focus-ring px-3 py-1.5 rounded-lg text-xs font-medium themed-btn-sec border border-inherit transition-all"
+        >
+          AI Studio
+        </button>
+        <button 
+          role="tab" 
+          aria-selected="false" 
+          aria-controls="model-panel-groq" 
+          id="tab-groq" 
+          tabindex="-1"
+          onclick="activateTab('groq')"
+          class="model-tab focus-ring px-3 py-1.5 rounded-lg text-xs font-medium themed-btn-sec border border-inherit transition-all"
+        >
+          Groq
+        </button>
+        <button 
+          role="tab" 
+          aria-selected="false" 
+          aria-controls="model-panel-grok" 
+          id="tab-grok" 
+          tabindex="-1"
+          onclick="activateTab('grok')"
+          class="model-tab focus-ring px-3 py-1.5 rounded-lg text-xs font-medium themed-btn-sec border border-inherit transition-all"
+        >
+          Grok (xAI)
+        </button>
+        <button 
+          role="tab" 
+          aria-selected="false" 
+          aria-controls="model-panel-qwen" 
+          id="tab-qwen" 
+          tabindex="-1"
+          onclick="activateTab('qwen')"
+          class="model-tab focus-ring px-3 py-1.5 rounded-lg text-xs font-medium themed-btn-sec border border-inherit transition-all"
+        >
+          Qwen
+        </button>
+      </div>
+
+      <!-- ARIA Tab Panels -->
+      <div class="space-y-4">
+
+        <!-- 1. Claude -->
+        <div 
+          role="tabpanel" 
+          id="model-panel-claude" 
+          aria-labelledby="tab-claude" 
+          tabindex="0"
+          class="model-panel focus-ring themed-card border rounded-xl p-5 space-y-3"
+        >
+          <div class="flex items-center justify-between border-b border-inherit pb-3">
+            <div>
+              <h4 class="text-sm font-bold">Claude 3.5 / 3.7 Sonnet (Anthropic)</h4>
+              <p class="text-xs themed-text-muted">Uses Artifacts to render SVG diagrams and single-file HTML apps in live previews.</p>
+            </div>
+            <button onclick="copyModelPrompt('model-code-claude', this)" class="focus-ring text-xs px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg transition-colors font-medium">
+              Copy Prompt
+            </button>
+          </div>
+          <pre class="themed-inner p-4 rounded-lg text-xs font-mono whitespace-pre-wrap overflow-x-auto border border-inherit leading-relaxed"><code id="model-code-claude">Deliver this multi-rung benchmark on "Public-Key Cryptography":
+
+1. Baseline: Explain the mechanics of asymmetric encryption clearly.
+2. ASD-STE100: Rewrite the explanation in ASD-STE100 Simplified Technical English (~80% spec compliance: active voice only, max 20 words per sentence, one command per sentence).
+3. E-Prime: Rewrite eliminating all forms of the verb "to be" (no is, are, was, were, be, being, been).
+4. Up-Goer Five: Explain using ONLY the ten hundred (1,000) most common English words.
+5. RFC 2119: Define the protocol using uppercase normative keywords (MUST, SHALL, SHOULD, MAY).
+6. Diagram Artifact: Render a pure SVG or Mermaid diagram inside an artifact with NO explanatory text before or after.
+7. Interactive Artifact: Build a self-contained interactive single-file HTML/JS artifact that lets me step through key generation, encryption, and decryption with animated state transitions.
+8. 3B1B Video Script: Provide a complete Python Manim script animating modular arithmetic with narration text mapped to timestamps.</code></pre>
+        </div>
+
+        <!-- 2. ChatGPT -->
+        <div 
+          role="tabpanel" 
+          id="model-panel-chatgpt" 
+          aria-labelledby="tab-chatgpt" 
+          tabindex="0"
+          class="model-panel hidden focus-ring themed-card border rounded-xl p-5 space-y-3"
+        >
+          <div class="flex items-center justify-between border-b border-inherit pb-3">
+            <div>
+              <h4 class="text-sm font-bold">ChatGPT (OpenAI Web / Canvas)</h4>
+              <p class="text-xs themed-text-muted">Optimized for Canvas code blocks and Python sandbox script generation.</p>
+            </div>
+            <button onclick="copyModelPrompt('model-code-chatgpt', this)" class="focus-ring text-xs px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg transition-colors font-medium">
+              Copy Prompt
+            </button>
+          </div>
+          <pre class="themed-inner p-4 rounded-lg text-xs font-mono whitespace-pre-wrap overflow-x-auto border border-inherit leading-relaxed"><code id="model-code-chatgpt">Execute this 8-tier progression on "Public-Key Cryptography":
+
+- Tier 1 (Baseline): Clear technical explanation of asymmetric key pairs and trapdoor functions.
+- Tier 2 (ASD-STE100): Rewrite using ASD-STE100 rules (active voice, present tense, max 20 words per sentence).
+- Tier 3 (E-Prime): Rewrite eliminating all forms of "to be" (is, are, was, were, be, been).
+- Tier 4 (Up-Goer Five): Explain using only the 1,000 simplest English words.
+- Tier 5 (RFC 2119): Formal technical spec using capitalized RFC 2119 terms (MUST, REQUIRED, SHALL, MAY).
+- Tier 6 (Diagram): Output ONLY a Mermaid.js diagram illustrating key generation and message exchange. Zero prose.
+- Tier 7 (Interactive HTML): In a single HTML code block (with inline CSS and vanilla JS), provide an interactive stepper component that animates each cryptographic phase upon clicking "Next Step".
+- Tier 8 (3B1B Manim): A complete executable Python Manim script illustrating the discrete logarithm or prime factorization problem with spoken voiceover copy in comments.</code></pre>
+        </div>
+
+        <!-- 3. OpenAI API -->
+        <div 
+          role="tabpanel" 
+          id="model-panel-openai" 
+          aria-labelledby="tab-openai" 
+          tabindex="0"
+          class="model-panel hidden focus-ring themed-card border rounded-xl p-5 space-y-3"
+        >
+          <div class="flex items-center justify-between border-b border-inherit pb-3">
+            <div>
+              <h4 class="text-sm font-bold">OpenAI API (GPT-4o / o1 / o3-mini)</h4>
+              <p class="text-xs themed-text-muted">Structured system + user format with zero conversational filler.</p>
+            </div>
+            <button onclick="copyModelPrompt('model-code-openai', this)" class="focus-ring text-xs px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg transition-colors font-medium">
+              Copy Prompt
+            </button>
+          </div>
+          <pre class="themed-inner p-4 rounded-lg text-xs font-mono whitespace-pre-wrap overflow-x-auto border border-inherit leading-relaxed"><code id="model-code-openai">System: You are an expert cryptographer and technical communications engineer. Adhere strictly to format rules and negative constraints without preamble or summary filler.
+
+User:
+Produce the following 8 deliverables for "Public-Key Cryptography":
+1. BASELINE: Standard technical summary of public-key cryptography.
+2. ASD-STE100: Technical translation adhering strictly to ASD-STE100 guidelines (max 20 words/sentence, active voice).
+3. E-PRIME: Translation eliminating all forms of the verb "to be" (is/are/was/were/be/being/been).
+4. UP-GOER FIVE: Translation restricted to the 1,000 most common English words.
+5. RFC 2119: Formal specification using capitalized normative requirements (MUST, MUST NOT, SHALL, SHOULD, MAY).
+6. DIAGRAM ONLY: Pure Mermaid.js graph string inside a code block. Output zero text before or after.
+7. STANDALONE HTML: One complete self-contained HTML/CSS/JS file with an interactive step-by-step state machine.
+8. 3B1B SCRIPT: Executable Python `manim` script with an aligned table of timestamps and narration audio text.</code></pre>
+        </div>
+
+        <!-- 4. Gemini -->
+        <div 
+          role="tabpanel" 
+          id="model-panel-gemini" 
+          aria-labelledby="tab-gemini" 
+          tabindex="0"
+          class="model-panel hidden focus-ring themed-card border rounded-xl p-5 space-y-3"
+        >
+          <div class="flex items-center justify-between border-b border-inherit pb-3">
+            <div>
+              <h4 class="text-sm font-bold">Gemini (gemini.google.com)</h4>
+              <p class="text-xs themed-text-muted">Conversational flow with markdown blocks and Google Workspace compatibility.</p>
+            </div>
+            <button onclick="copyModelPrompt('model-code-gemini', this)" class="focus-ring text-xs px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg transition-colors font-medium">
+              Copy Prompt
+            </button>
+          </div>
+          <pre class="themed-inner p-4 rounded-lg text-xs font-mono whitespace-pre-wrap overflow-x-auto border border-inherit leading-relaxed"><code id="model-code-gemini">Explain "Public-Key Cryptography" using this progressive 8-rung benchmark:
+
+1. Baseline: Explain asymmetric encryption in plain, accessible terms.
+2. ASD-STE100: Rewrite following ASD-STE100 rules (active voice, maximum 20 words per sentence, one instruction per line).
+3. E-Prime: Rewrite without using any forms of "to be" (is, are, was, were, be, been).
+4. Up-Goer 5: Explain using only the 1,000 most common English words (Thing Explainer style).
+5. RFC 2119: Formal spec with uppercase terms (MUST, MUST NOT, REQUIRED, SHALL, MAY).
+6. Diagram Only: Provide a Mermaid.js diagram illustrating key generation and cipher exchange. No introductory or trailing text.
+7. Standalone HTML: A complete single-file HTML page with interactive step-by-step buttons and CSS animations.
+8. 3B1B Video: Full video storyboard with visual geometric cues and exact voiceover copy ready for TTS.</code></pre>
+        </div>
+
+        <!-- 5. AI Studio -->
+        <div 
+          role="tabpanel" 
+          id="model-panel-aistudio" 
+          aria-labelledby="tab-aistudio" 
+          tabindex="0"
+          class="model-panel hidden focus-ring themed-card border rounded-xl p-5 space-y-3"
+        >
+          <div class="flex items-center justify-between border-b border-inherit pb-3">
+            <div>
+              <h4 class="text-sm font-bold">Google AI Studio (Gemini 2.0 / 1.5 Pro)</h4>
+              <p class="text-xs themed-text-muted">High-token raw playground prompt with clean markdown section delimiters.</p>
+            </div>
+            <button onclick="copyModelPrompt('model-code-aistudio', this)" class="focus-ring text-xs px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg transition-colors font-medium">
+              Copy Prompt
+            </button>
+          </div>
+          <pre class="themed-inner p-4 rounded-lg text-xs font-mono whitespace-pre-wrap overflow-x-auto border border-inherit leading-relaxed"><code id="model-code-aistudio">Provide a complete multi-tier technical analysis of "Public-Key Cryptography" across 8 structured sections:
+
+### 1. Conceptual Mechanics
+Detailed technical summary of asymmetric key generation, trapdoor functions, and cipher negotiation.
+
+### 2. ASD-STE100 Technical Translation
+Translate Section 1 into ASD-STE100 Simplified Technical English (~80% spec: short sentences, active voice, approved verbs).
+
+### 3. E-Prime Translation
+Eliminate all forms of the verb "to be" (is, are, was, were, be, being, been). Every sentence must name an active agent.
+
+### 4. Up-Goer Five Translation
+Explain using ONLY the 1,000 most common English words.
+
+### 5. RFC 2119 Standard
+Draft a formal protocol specification using standard capitalized RFC 2119 keywords (MUST, SHALL, SHOULD, MAY).
+
+### 6. Visual Architecture
+Output ONLY a Mermaid.js sequence flowchart. Strict negative constraint: zero prose outside the code fence.
+
+### 7. Standalone HTML Stepper
+A complete runnable `index.html` file with embedded styles and JavaScript providing an interactive step-by-step visualization.
+
+### 8. 3B1B Manim Code
+A valid Python script using `manim` depicting the mathematical foundations with inline timestamped narration copy.</code></pre>
+        </div>
+
+        <!-- 6. Groq -->
+        <div 
+          role="tabpanel" 
+          id="model-panel-groq" 
+          aria-labelledby="tab-groq" 
+          tabindex="0"
+          class="model-panel hidden focus-ring themed-card border rounded-xl p-5 space-y-3"
+        >
+          <div class="flex items-center justify-between border-b border-inherit pb-3">
+            <div>
+              <h4 class="text-sm font-bold">Groq (Llama-3.3 / Mixtral)</h4>
+              <p class="text-xs themed-text-muted">Engineered for raw text generation speed with zero UI fluff.</p>
+            </div>
+            <button onclick="copyModelPrompt('model-code-groq', this)" class="focus-ring text-xs px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg transition-colors font-medium">
+              Copy Prompt
+            </button>
+          </div>
+          <pre class="themed-inner p-4 rounded-lg text-xs font-mono whitespace-pre-wrap overflow-x-auto border border-inherit leading-relaxed"><code id="model-code-groq">Fulfill these 8 tasks sequentially on "Public-Key Cryptography":
+
+[1. BASELINE] Concise explanation of asymmetric cryptography.
+[2. ASD-STE100] Rewrite in ASD-STE100 (active voice, max 20 words/sentence, approved verbs).
+[3. E-PRIME] Rewrite without any forms of "to be" (no is/are/was/were/be/been).
+[4. UP-GOER FIVE] Explain using only the 1,000 most common English words.
+[5. RFC 2119] Write as an RFC 2119 spec using MUST, MUST NOT, SHALL, SHOULD, MAY.
+[6. DIAGRAM ONLY] Output ONLY raw Mermaid.js code. Zero explanatory text.
+[7. STANDALONE HTML] Output one complete HTML file with inline CSS/JS for an interactive step-through demo.
+[8. 3B1B SCRIPT] Python Manim script + plain-text narration script ready for TTS.</code></pre>
+        </div>
+
+        <!-- 7. Grok -->
+        <div 
+          role="tabpanel" 
+          id="model-panel-grok" 
+          aria-labelledby="tab-grok" 
+          tabindex="0"
+          class="model-panel hidden focus-ring themed-card border rounded-xl p-5 space-y-3"
+        >
+          <div class="flex items-center justify-between border-b border-inherit pb-3">
+            <div>
+              <h4 class="text-sm font-bold">Grok 2 / Grok 3 (xAI)</h4>
+              <p class="text-xs themed-text-muted">Leverages Grok's direct, no-nonsense reasoning and code capabilities.</p>
+            </div>
+            <button onclick="copyModelPrompt('model-code-grok', this)" class="focus-ring text-xs px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg transition-colors font-medium">
+              Copy Prompt
+            </button>
+          </div>
+          <pre class="themed-inner p-4 rounded-lg text-xs font-mono whitespace-pre-wrap overflow-x-auto border border-inherit leading-relaxed"><code id="model-code-grok">Run a strict multi-tier evaluation on "Public-Key Cryptography":
+
+1. Baseline: Explain how public-key cryptography works with real-world clarity.
+2. ASD-STE100: Rewrite with 80% ASD-STE100 compliance (active voice, max 20 words per sentence, strict noun consistency).
+3. E-Prime: Rewrite eliminating all forms of "to be" (no is, are, was, were, be, being, been).
+4. Up-Goer Five: Explain using ONLY the 1,000 most common words in English.
+5. RFC 2119: Define the protocol as an RFC spec using MUST, SHALL, SHOULD, MAY.
+6. Diagram: Pure Mermaid diagram only. No chit-chat or introductory comments.
+7. HTML App: Single-file interactive HTML/CSS/JS page that lets me click through the key exchange steps with visual animation.
+8. 3B1B Explainer: Full Python Manim scene script plus synchronized voiceover narration text.</code></pre>
+        </div>
+
+        <!-- 8. Qwen -->
+        <div 
+          role="tabpanel" 
+          id="model-panel-qwen" 
+          aria-labelledby="tab-qwen" 
+          tabindex="0"
+          class="model-panel hidden focus-ring themed-card border rounded-xl p-5 space-y-3"
+        >
+          <div class="flex items-center justify-between border-b border-inherit pb-3">
+            <div>
+              <h4 class="text-sm font-bold">Qwen 2.5 / Qwen-Max (Alibaba)</h4>
+              <p class="text-xs themed-text-muted">Strong multilingual and math-coding model; thrives on structured markdown checklists.</p>
+            </div>
+            <button onclick="copyModelPrompt('model-code-qwen', this)" class="focus-ring text-xs px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg transition-colors font-medium">
+              Copy Prompt
+            </button>
+          </div>
+          <pre class="themed-inner p-4 rounded-lg text-xs font-mono whitespace-pre-wrap overflow-x-auto border border-inherit leading-relaxed"><code id="model-code-qwen">Please provide a comprehensive 8-level response for the topic "Public-Key Cryptography":
+
+Level 1 (Concept): Explain how asymmetric encryption functions mathematically and practically.
+Level 2 (ASD-STE100): Apply ASD-STE100 Simplified Technical English rules (active voice, simple sentences, max 20 words/sentence).
+Level 3 (E-Prime): Rewrite strictly omitting the verb "to be" in all conjugations (is, are, was, were, be, been).
+Level 4 (Up-Goer Five): Use only the 1,000 most frequent English words to explain the concept.
+Level 5 (RFC 2119 Standard): Write a formal protocol specification utilizing capitalized RFC 2119 requirement words (MUST, MUST NOT, REQUIRED, SHALL, MAY).
+Level 6 (Diagram): Output ONLY a valid Mermaid.js diagram. Do not write any explanatory text.
+Level 7 (Interactive HTML): Output a single complete HTML file containing embedded CSS and JavaScript that renders an interactive step-by-step visualizer.
+Level 8 (3Blue1Brown Animation): Write a complete Python `manim` script visualizing the mathematics with aligned voiceover narration cues.</code></pre>
+        </div>
+
+      </div>
+    </section>
+
   </div>
 
   <script>
-    const platforms = ['claude', 'chatgpt', 'openai', 'aistudio', 'gemini', 'groq'];
-    const defaultTopic = 'how an AI agent loop works';
+    const models = ['claude', 'chatgpt', 'openai', 'gemini', 'aistudio', 'groq', 'grok', 'qwen'];
+    const tablist = document.getElementById('model-tablist');
 
-    function getPromptTemplates(topic) {
-      return {
-        claude: `Complete the following 4 tasks regarding "${topic}":
+    // Tab Activation with ARIA updates
+    function activateTab(targetId) {
+      models.forEach(id => {
+        const tab = document.getElementById(`tab-${id}`);
+        const panel = document.getElementById(`model-panel-${id}`);
+        const isSelected = (id === targetId);
 
-1. SIMPLE EXPLANATION: Explain ${topic} in clear, simple English without jargon so a beginner can understand it immediately.
-2. DIAGRAM ONLY: Create a complete visual diagram (SVG or Mermaid.js) showing ${topic}. Do not include any written explanation, summary, or introductory text—output only the diagram in an artifact.
-3. STANDALONE HTML FILE: Create a single self-contained HTML page (HTML + CSS + JavaScript) with an interactive, animated visualizer that lets the user step forward and backward through the process.
-4. VIDEO SCRIPT: Provide a complete video explainer script with visual scene descriptions on the left and spoken voiceover narration on the right.`,
+        tab.setAttribute('aria-selected', isSelected ? 'true' : 'false');
+        tab.setAttribute('tabindex', isSelected ? '0' : '-1');
 
-        chatgpt: `I need 4 distinct deliverables on the topic of "${topic}":
-
-1. Simple English: Explain ${topic} using plain language and simple everyday analogies.
-2. Diagram Only: Provide ONLY a Mermaid.js diagram illustrating the flow. Do not write any explanations or conversational remarks before or after the diagram.
-3. Standalone HTML: Write a single, runnable HTML file (with embedded CSS and vanilla JS) that creates an interactive step-by-step visual walk-through of the process.
-4. Video Script: Write a video production script including camera/visual cues and exact voiceover copy ready for text-to-speech.`,
-
-        openai: `System: Follow output instructions strictly. Adhere to negative constraints without conversational filler.
-
-User:
-Generate the following 4 deliverables for "${topic}":
-
-Deliverable 1 (Simple English): Plain-language explanation of the core concept.
-Deliverable 2 (Diagram Only): Valid Mermaid.js diagram block representing the concept visually. Output zero prose or commentary outside the code block.
-Deliverable 3 (Standalone HTML): A single self-contained HTML/CSS/JS file containing an interactive step-by-step visualizer with "Next" and "Previous" controls.
-Deliverable 4 (Video Script): A two-column video script mapping visual timestamps and animation actions to voiceover narration.`,
-
-        aistudio: `Process the topic "${topic}" across these 4 structured deliverables:
-
-### 1. Simple English Overview
-Explain ${topic} in plain, easy-to-understand English. Keep sentences direct and avoid dense technical terminology.
-
-### 2. Diagram (Visual Only)
-Generate a visual flowchart using Mermaid.js. Strict constraint: Do not write any explanation or summary—output only the diagram code block.
-
-### 3. Standalone HTML File
-Provide complete code for a single standalone \`index.html\` file with embedded styles and script. The page must provide an interactive, animated widget to step through the stages of ${topic}.
-
-### 4. Video Narration Script
-Provide a video storyboard with timestamped visual cues and narration audio copy ready for recording.`,
-
-        gemini: `Deliver a 4-part breakdown of "${topic}":
-
-1. Simple English: Explain ${topic} in straightforward, accessible language.
-2. Diagram Only: Create a visual flowchart (Mermaid.js). Do not include any accompanying written explanation or intro.
-3. Standalone HTML Page: Generate a single runnable HTML file containing inline CSS and JavaScript that lets a user click through each step with animated visual highlights.
-4. Video Script: Provide an audio-visual script with scene directions and spoken voiceover narration.`,
-
-        groq: `Provide 4 sequential outputs for the topic "${topic}":
-
-[1. SIMPLE EXPLANATION]
-Explain ${topic} in clear, simple English for a non-technical reader.
-
-[2. DIAGRAM ONLY]
-Output ONLY a raw Mermaid.js diagram illustrating ${topic}. Do not write any explanatory or conversational text.
-
-[3. STANDALONE HTML]
-Output one complete, self-contained HTML file (with inline CSS and JS) that implements an interactive step-through animation.
-
-[4. VIDEO SCRIPT]
-Provide a scene-by-scene video script with visual animation directions and exact voiceover narration.`
-      };
-    }
-
-    function updatePrompts() {
-      const topic = document.getElementById('topic-input').value.trim() || defaultTopic;
-      const templates = getPromptTemplates(topic);
-      platforms.forEach(p => {
-        const el = document.getElementById(`prompt-${p}`);
-        if (el) el.textContent = templates[p];
-      });
-    }
-
-    function resetTopic() {
-      document.getElementById('topic-input').value = defaultTopic;
-      updatePrompts();
-    }
-
-    function switchTab(target) {
-      platforms.forEach(id => {
-        const panel = document.getElementById(`panel-${id}`);
-        const btn = document.getElementById(`tab-${id}`);
-        if (id === target) {
+        if (isSelected) {
           panel.classList.remove('hidden');
-          btn.className = 'tab-btn px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all bg-sky-600 text-white shadow-sm';
+          tab.className = 'model-tab focus-ring px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-600 text-white shadow-sm transition-all';
         } else {
           panel.classList.add('hidden');
-          btn.className = 'tab-btn px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all bg-slate-800 text-slate-300 hover:bg-slate-700';
+          tab.className = 'model-tab focus-ring px-3 py-1.5 rounded-lg text-xs font-medium themed-btn-sec border border-inherit transition-all';
         }
       });
     }
 
-    async function copyContent(elementId, btn) {
-      const text = document.getElementById(elementId).textContent;
+    // Keyboard Navigation for ARIA Tabs (Left, Right, Home, End)
+    tablist.addEventListener('keydown', (e) => {
+      const activeElement = document.activeElement;
+      const currentIndex = models.findIndex(id => `tab-${id}` === activeElement.id);
+      if (currentIndex === -1) return;
+
+      let nextIndex = currentIndex;
+
+      switch (e.key) {
+        case 'ArrowRight':
+          nextIndex = (currentIndex + 1) % models.length;
+          break;
+        case 'ArrowLeft':
+          nextIndex = (currentIndex - 1 + models.length) % models.length;
+          break;
+        case 'Home':
+          nextIndex = 0;
+          break;
+        case 'End':
+          nextIndex = models.length - 1;
+          break;
+        default:
+          return;
+      }
+
+      e.preventDefault();
+      const nextId = models[nextIndex];
+      activateTab(nextId);
+      document.getElementById(`tab-${nextId}`).focus();
+    });
+
+    // Tri-State Theme Switcher
+    function setTheme(theme) {
+      const html = document.documentElement;
+      html.classList.remove('theme-light', 'theme-medium', 'theme-dark');
+      html.classList.add(`theme-${theme}`);
+
+      ['light', 'medium', 'dark'].forEach(t => {
+        const btn = document.getElementById(`theme-btn-${t}`);
+        const isActive = (t === theme);
+        btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+        if (isActive) {
+          btn.className = 'focus-ring px-2.5 py-1 rounded-lg transition-colors border bg-emerald-600 text-white font-semibold';
+        } else {
+          btn.className = 'focus-ring px-2.5 py-1 rounded-lg transition-colors border themed-btn-sec font-medium';
+        }
+      });
+    }
+
+    // Clipboard helpers
+    async function copyFullScript(btn) {
+      const text = document.getElementById('raw-prompt').innerText;
       try {
         await navigator.clipboard.writeText(text);
-        const originalText = btn.textContent;
-        btn.textContent = 'Copied!';
-        btn.classList.replace('bg-sky-600', 'bg-emerald-600');
+        const original = btn.innerHTML;
+        btn.innerHTML = '<span>Copied Script!</span>';
+        btn.classList.replace('bg-emerald-600', 'bg-sky-600');
         setTimeout(() => {
-          btn.textContent = originalText;
-          btn.classList.replace('bg-emerald-600', 'bg-sky-600');
+          btn.innerHTML = original;
+          btn.classList.replace('bg-sky-600', 'bg-emerald-600');
         }, 2000);
       } catch (err) {
-        console.error('Failed to copy', err);
+        console.error('Copy failed', err);
       }
     }
 
-    // Initialize prompt text on load
-    updatePrompts();
+    async function copySnippet(text, btn) {
+      try {
+        await navigator.clipboard.writeText(text);
+        const original = btn.innerText;
+        btn.innerText = 'Copied!';
+        btn.classList.add('bg-emerald-600', 'text-white');
+        setTimeout(() => {
+          btn.innerText = original;
+          btn.classList.remove('bg-emerald-600', 'text-white');
+        }, 1500);
+      } catch (err) {
+        console.error('Copy failed', err);
+      }
+    }
+
+    async function copyModelPrompt(elementId, btn) {
+      const text = document.getElementById(elementId).innerText;
+      try {
+        await navigator.clipboard.writeText(text);
+        const original = btn.innerText;
+        btn.innerText = 'Copied!';
+        btn.classList.replace('bg-emerald-600', 'bg-sky-600');
+        setTimeout(() => {
+          btn.innerText = original;
+          btn.classList.replace('bg-sky-600', 'bg-emerald-600');
+        }, 1500);
+      } catch (err) {
+        console.error('Copy failed', err);
+      }
+    }
   </script>
 </body>
 </html>
