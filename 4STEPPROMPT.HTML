@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>4-Step Progressive Prompt Generator</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              500: '#0ea5e9',
+              600: '#0284c7',
+            }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen py-10 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-4xl mx-auto space-y-8">
+    
+    <!-- Header -->
+    <header class="text-center space-y-2">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-sky-500/10 text-sky-400 border border-sky-500/20">
+        4-Tier Capability Framework
+      </div>
+      <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white">
+        Multi-Platform Prompt Generator
+      </h1>
+      <p class="text-slate-400 text-sm max-w-xl mx-auto">
+        1. Simple English &bull; 2. Diagram Only &bull; 3. Standalone HTML &bull; 4. Video Script
+      </p>
+    </header>
+
+    <!-- Interactive Topic Input -->
+    <div class="bg-slate-800/90 border border-slate-700 rounded-xl p-5 shadow-lg space-y-2">
+      <label for="topic-input" class="block text-xs font-semibold uppercase tracking-wider text-slate-300">
+        Enter Any Topic to Test:
+      </label>
+      <div class="flex gap-3">
+        <input 
+          id="topic-input" 
+          type="text" 
+          value="how an AI agent loop works" 
+          oninput="updatePrompts()"
+          placeholder="e.g. quantum computing, how DNS works, git rebase..."
+          class="flex-1 bg-slate-950 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-colors"
+        />
+        <button 
+          onclick="resetTopic()" 
+          class="px-3 py-2 text-xs font-medium bg-slate-700 hover:bg-slate-600 rounded-lg text-slate-200 transition-colors">
+          Reset
+        </button>
+      </div>
+    </div>
+
+    <!-- Platform Selector Tabs -->
+    <div class="flex flex-wrap gap-2 justify-center border-b border-slate-800 pb-3">
+      <button onclick="switchTab('claude')" id="tab-claude" class="tab-btn px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all bg-sky-600 text-white shadow-sm">
+        Claude
+      </button>
+      <button onclick="switchTab('chatgpt')" id="tab-chatgpt" class="tab-btn px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all bg-slate-800 text-slate-300 hover:bg-slate-700">
+        ChatGPT
+      </button>
+      <button onclick="switchTab('openai')" id="tab-openai" class="tab-btn px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all bg-slate-800 text-slate-300 hover:bg-slate-700">
+        OpenAI API
+      </button>
+      <button onclick="switchTab('aistudio')" id="tab-aistudio" class="tab-btn px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all bg-slate-800 text-slate-300 hover:bg-slate-700">
+        AI Studio
+      </button>
+      <button onclick="switchTab('gemini')" id="tab-gemini" class="tab-btn px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all bg-slate-800 text-slate-300 hover:bg-slate-700">
+        Gemini Web
+      </button>
+      <button onclick="switchTab('groq')" id="tab-groq" class="tab-btn px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all bg-slate-800 text-slate-300 hover:bg-slate-700">
+        Groq
+      </button>
+    </div>
+
+    <!-- Cards Container -->
+    <main>
+
+      <!-- 1. Claude -->
+      <section id="panel-claude" class="platform-panel bg-slate-800/80 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-700 pb-3">
+          <div>
+            <h2 class="text-lg font-bold text-white flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+              Claude (Anthropic)
+            </h2>
+            <p class="text-xs text-slate-400">Renders HTML & SVG diagrams directly inside Artifacts.</p>
+          </div>
+          <button onclick="copyContent('prompt-claude', this)" class="copy-btn px-3.5 py-2 text-xs font-semibold rounded-lg bg-sky-600 hover:bg-sky-500 text-white transition-colors">
+            Copy Prompt
+          </button>
+        </div>
+        <pre class="bg-slate-950 rounded-xl p-4 text-xs sm:text-sm text-slate-200 overflow-x-auto border border-slate-800 leading-relaxed font-mono whitespace-pre-wrap"><code id="prompt-claude"></code></pre>
+      </section>
+
+      <!-- 2. ChatGPT -->
+      <section id="panel-chatgpt" class="platform-panel hidden bg-slate-800/80 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-700 pb-3">
+          <div>
+            <h2 class="text-lg font-bold text-white flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+              ChatGPT (OpenAI Canvas / Web)
+            </h2>
+            <p class="text-xs text-slate-400">Optimized for Canvas code blocks and Python sandbox scripts.</p>
+          </div>
+          <button onclick="copyContent('prompt-chatgpt', this)" class="copy-btn px-3.5 py-2 text-xs font-semibold rounded-lg bg-sky-600 hover:bg-sky-500 text-white transition-colors">
+            Copy Prompt
+          </button>
+        </div>
+        <pre class="bg-slate-950 rounded-xl p-4 text-xs sm:text-sm text-slate-200 overflow-x-auto border border-slate-800 leading-relaxed font-mono whitespace-pre-wrap"><code id="prompt-chatgpt"></code></pre>
+      </section>
+
+      <!-- 3. OpenAI API -->
+      <section id="panel-openai" class="platform-panel hidden bg-slate-800/80 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-700 pb-3">
+          <div>
+            <h2 class="text-lg font-bold text-white flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+              OpenAI API & Playground
+            </h2>
+            <p class="text-xs text-slate-400">Formatted as explicit system instructions and deliverable blocks.</p>
+          </div>
+          <button onclick="copyContent('prompt-openai', this)" class="copy-btn px-3.5 py-2 text-xs font-semibold rounded-lg bg-sky-600 hover:bg-sky-500 text-white transition-colors">
+            Copy Prompt
+          </button>
+        </div>
+        <pre class="bg-slate-950 rounded-xl p-4 text-xs sm:text-sm text-slate-200 overflow-x-auto border border-slate-800 leading-relaxed font-mono whitespace-pre-wrap"><code id="prompt-openai"></code></pre>
+      </section>
+
+      <!-- 4. Google AI Studio -->
+      <section id="panel-aistudio" class="platform-panel hidden bg-slate-800/80 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-700 pb-3">
+          <div>
+            <h2 class="text-lg font-bold text-white flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+              Google AI Studio
+            </h2>
+            <p class="text-xs text-slate-400">Formatted for raw markdown rendering and high context capacity.</p>
+          </div>
+          <button onclick="copyContent('prompt-aistudio', this)" class="copy-btn px-3.5 py-2 text-xs font-semibold rounded-lg bg-sky-600 hover:bg-sky-500 text-white transition-colors">
+            Copy Prompt
+          </button>
+        </div>
+        <pre class="bg-slate-950 rounded-xl p-4 text-xs sm:text-sm text-slate-200 overflow-x-auto border border-slate-800 leading-relaxed font-mono whitespace-pre-wrap"><code id="prompt-aistudio"></code></pre>
+      </section>
+
+      <!-- 5. Gemini Web -->
+      <section id="panel-gemini" class="platform-panel hidden bg-slate-800/80 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-700 pb-3">
+          <div>
+            <h2 class="text-lg font-bold text-white flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+              Gemini Web App
+            </h2>
+            <p class="text-xs text-slate-400">Formatted for conversational chat with clean code blocks.</p>
+          </div>
+          <button onclick="copyContent('prompt-gemini', this)" class="copy-btn px-3.5 py-2 text-xs font-semibold rounded-lg bg-sky-600 hover:bg-sky-500 text-white transition-colors">
+            Copy Prompt
+          </button>
+        </div>
+        <pre class="bg-slate-950 rounded-xl p-4 text-xs sm:text-sm text-slate-200 overflow-x-auto border border-slate-800 leading-relaxed font-mono whitespace-pre-wrap"><code id="prompt-gemini"></code></pre>
+      </section>
+
+      <!-- 6. Groq -->
+      <section id="panel-groq" class="platform-panel hidden bg-slate-800/80 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-700 pb-3">
+          <div>
+            <h2 class="text-lg font-bold text-white flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+              Groq (Llama-3 / Mixtral)
+            </h2>
+            <p class="text-xs text-slate-400">Zero-fluff direct output for fast text inference engines.</p>
+          </div>
+          <button onclick="copyContent('prompt-groq', this)" class="copy-btn px-3.5 py-2 text-xs font-semibold rounded-lg bg-sky-600 hover:bg-sky-500 text-white transition-colors">
+            Copy Prompt
+          </button>
+        </div>
+        <pre class="bg-slate-950 rounded-xl p-4 text-xs sm:text-sm text-slate-200 overflow-x-auto border border-slate-800 leading-relaxed font-mono whitespace-pre-wrap"><code id="prompt-groq"></code></pre>
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+    const platforms = ['claude', 'chatgpt', 'openai', 'aistudio', 'gemini', 'groq'];
+    const defaultTopic = 'how an AI agent loop works';
+
+    function getPromptTemplates(topic) {
+      return {
+        claude: `Complete the following 4 tasks regarding "${topic}":
+
+1. SIMPLE EXPLANATION: Explain ${topic} in clear, simple English without jargon so a beginner can understand it immediately.
+2. DIAGRAM ONLY: Create a complete visual diagram (SVG or Mermaid.js) showing ${topic}. Do not include any written explanation, summary, or introductory text—output only the diagram in an artifact.
+3. STANDALONE HTML FILE: Create a single self-contained HTML page (HTML + CSS + JavaScript) with an interactive, animated visualizer that lets the user step forward and backward through the process.
+4. VIDEO SCRIPT: Provide a complete video explainer script with visual scene descriptions on the left and spoken voiceover narration on the right.`,
+
+        chatgpt: `I need 4 distinct deliverables on the topic of "${topic}":
+
+1. Simple English: Explain ${topic} using plain language and simple everyday analogies.
+2. Diagram Only: Provide ONLY a Mermaid.js diagram illustrating the flow. Do not write any explanations or conversational remarks before or after the diagram.
+3. Standalone HTML: Write a single, runnable HTML file (with embedded CSS and vanilla JS) that creates an interactive step-by-step visual walk-through of the process.
+4. Video Script: Write a video production script including camera/visual cues and exact voiceover copy ready for text-to-speech.`,
+
+        openai: `System: Follow output instructions strictly. Adhere to negative constraints without conversational filler.
+
+User:
+Generate the following 4 deliverables for "${topic}":
+
+Deliverable 1 (Simple English): Plain-language explanation of the core concept.
+Deliverable 2 (Diagram Only): Valid Mermaid.js diagram block representing the concept visually. Output zero prose or commentary outside the code block.
+Deliverable 3 (Standalone HTML): A single self-contained HTML/CSS/JS file containing an interactive step-by-step visualizer with "Next" and "Previous" controls.
+Deliverable 4 (Video Script): A two-column video script mapping visual timestamps and animation actions to voiceover narration.`,
+
+        aistudio: `Process the topic "${topic}" across these 4 structured deliverables:
+
+### 1. Simple English Overview
+Explain ${topic} in plain, easy-to-understand English. Keep sentences direct and avoid dense technical terminology.
+
+### 2. Diagram (Visual Only)
+Generate a visual flowchart using Mermaid.js. Strict constraint: Do not write any explanation or summary—output only the diagram code block.
+
+### 3. Standalone HTML File
+Provide complete code for a single standalone \`index.html\` file with embedded styles and script. The page must provide an interactive, animated widget to step through the stages of ${topic}.
+
+### 4. Video Narration Script
+Provide a video storyboard with timestamped visual cues and narration audio copy ready for recording.`,
+
+        gemini: `Deliver a 4-part breakdown of "${topic}":
+
+1. Simple English: Explain ${topic} in straightforward, accessible language.
+2. Diagram Only: Create a visual flowchart (Mermaid.js). Do not include any accompanying written explanation or intro.
+3. Standalone HTML Page: Generate a single runnable HTML file containing inline CSS and JavaScript that lets a user click through each step with animated visual highlights.
+4. Video Script: Provide an audio-visual script with scene directions and spoken voiceover narration.`,
+
+        groq: `Provide 4 sequential outputs for the topic "${topic}":
+
+[1. SIMPLE EXPLANATION]
+Explain ${topic} in clear, simple English for a non-technical reader.
+
+[2. DIAGRAM ONLY]
+Output ONLY a raw Mermaid.js diagram illustrating ${topic}. Do not write any explanatory or conversational text.
+
+[3. STANDALONE HTML]
+Output one complete, self-contained HTML file (with inline CSS and JS) that implements an interactive step-through animation.
+
+[4. VIDEO SCRIPT]
+Provide a scene-by-scene video script with visual animation directions and exact voiceover narration.`
+      };
+    }
+
+    function updatePrompts() {
+      const topic = document.getElementById('topic-input').value.trim() || defaultTopic;
+      const templates = getPromptTemplates(topic);
+      platforms.forEach(p => {
+        const el = document.getElementById(`prompt-${p}`);
+        if (el) el.textContent = templates[p];
+      });
+    }
+
+    function resetTopic() {
+      document.getElementById('topic-input').value = defaultTopic;
+      updatePrompts();
+    }
+
+    function switchTab(target) {
+      platforms.forEach(id => {
+        const panel = document.getElementById(`panel-${id}`);
+        const btn = document.getElementById(`tab-${id}`);
+        if (id === target) {
+          panel.classList.remove('hidden');
+          btn.className = 'tab-btn px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all bg-sky-600 text-white shadow-sm';
+        } else {
+          panel.classList.add('hidden');
+          btn.className = 'tab-btn px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all bg-slate-800 text-slate-300 hover:bg-slate-700';
+        }
+      });
+    }
+
+    async function copyContent(elementId, btn) {
+      const text = document.getElementById(elementId).textContent;
+      try {
+        await navigator.clipboard.writeText(text);
+        const originalText = btn.textContent;
+        btn.textContent = 'Copied!';
+        btn.classList.replace('bg-sky-600', 'bg-emerald-600');
+        setTimeout(() => {
+          btn.textContent = originalText;
+          btn.classList.replace('bg-emerald-600', 'bg-sky-600');
+        }, 2000);
+      } catch (err) {
+        console.error('Failed to copy', err);
+      }
+    }
+
+    // Initialize prompt text on load
+    updatePrompts();
+  </script>
+</body>
+</html>
